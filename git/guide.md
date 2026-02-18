@@ -1,58 +1,81 @@
-# 3) Git (DevOps workflow)
+# Git Learning Plan
 
-## 3.1 Branching, PRs, merge conflicts
+## Goal
+Use Git like a DevOps engineer: safe collaboration, clean history, and infrastructure changes managed through reviewable pull requests.
 
-### Good looks like
+## Time Commitment
+- 4 weeks
+- 4 to 5 sessions per week
+- 45 to 75 minutes per session
 
-You can work in a team flow:
+## Prerequisites
+- GitHub account and one practice repo
+- Basic CLI usage (`git` in terminal)
 
-- feature branch → PR → review → merge
+## Week 1: Core Git Mechanics
+### Focus
+- Working tree, staging area, commit history
+- Branch creation and switching
+- Useful inspection commands (`status`, `log`, `diff`, `show`)
 
-### Must-do habits
+### Labs
+1. Make at least 10 small commits with meaningful messages.
+2. Practice amending the last commit in a scratch branch.
+3. Compare file-level diff vs commit-level diff.
 
-- Small commits with clear messages
+### Done Criteria
+- You can explain exactly what is staged vs unstaged.
+- Your commit messages state intent, not just "update file".
 
-- PR descriptions that explain “why”
+## Week 2: Team Workflow with Branches and PRs
+### Focus
+- Feature branch workflow
+- Pull request hygiene (description, testing notes, rollback notes)
+- Merge strategies (merge commit, squash, rebase)
 
-- Resolve conflicts calmly
+### Labs
+1. Open one PR per task, even for solo work.
+2. Use a PR template: problem, change, validation, risk.
+3. Request and respond to at least 3 review comments.
 
-### Practice routine (weekly)
+### Done Criteria
+- Every code change is traceable through a PR.
+- PRs are small enough to review in 10 to 15 minutes.
 
-- Create a branch for every change
+## Week 3: Conflict Resolution, Rebase, Recovery
+### Focus
+- Handling merge conflicts
+- Interactive rebase for cleanup
+- Recovery tools: `reflog`, reverting bad changes
 
-- Open PR even if it’s just you
+### Labs
+1. Intentionally create and resolve 3 merge conflicts.
+2. Use rebase to squash noisy commits before merge.
+3. Recover a "lost" commit using `reflog`.
 
-- Write a short review comment on your own PR
+### Done Criteria
+- You can resolve conflicts without deleting others' work.
+- You can recover mistakes without panic or forceful resets.
 
-**Measurable outcomes**
+## Week 4: Releases, Tags, and DevOps Change Discipline
+### Focus
+- Semantic version tags (`v1.0.0` style)
+- `CHANGELOG.md` maintenance
+- Infrastructure-as-code and GitOps mindset
 
-- ✅ At least 10 PRs in your repo by graduation
+### Labs
+1. Create 3 tagged releases with clear notes.
+2. Maintain a changelog entry for each merged PR.
+3. For infra changes, include expected impact and rollback in PR text.
 
-- ✅ You’ve resolved at least 2 intentional conflicts
+### Final Project
+Set up a full repo workflow that includes:
+- Protected default branch
+- PR template and issue template
+- Release tagging process
+- `CHANGELOG.md` updated per release
 
----
-
-## 3.2 Tags/releases + change notes
-
-- Use tags for milestones: `v0.1`, `v0.2`
-
-- Keep a `CHANGELOG.md` with 3–5 lines per milestone
-
-**Measurable outcomes**
-
-- ✅ 3 releases tagged, each with change notes
-
----
-
-## 3.3 “Infrastructure changes via PR” mindset
-
-Rule:
-
-- No manual “click-only” changes without documenting
-
-- Every infra change gets:
-  - a PR
-
-  - a plan/expected impact
-
-  - rollback note
+## Mastery Checklist
+- I create clean, reviewable commits and PRs consistently.
+- I can resolve merge conflicts and recover from mistakes safely.
+- I track infra changes through PRs, not undocumented manual clicks.

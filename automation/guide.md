@@ -1,75 +1,105 @@
-# 5) Automation bridge (DevOps transition)
+# Automation Learning Plan
 
-## 5.1 Terraform fundamentals
+## Goal
+Move from manual operations to repeatable automation using infrastructure as code, CI/CD, and container workflows.
 
-### Must understand
+## Time Commitment
+- 6 weeks
+- 5 sessions per week
+- 60 to 90 minutes per session
 
-- Declarative resources
+## Prerequisites
+- Linux and Git fundamentals from other guides
+- Cloud account and CLI access
+- Docker installed locally
 
-- State (local vs remote concept)
-
-- Variables/outputs
-
-- Modules (reusability)
+## Week 1: Automation Mindset and Scripting
+### Focus
+- Idempotent operations
+- Bash scripting for repeatable tasks
+- Exit codes and defensive scripting (`set -euo pipefail`)
 
 ### Labs
+1. Convert a manual server setup checklist into a Bash script.
+2. Add validation checks and clear error messages.
+3. Run script twice and confirm safe repeated behavior.
 
-- Write Terraform for: VPC + EC2 + SG
+### Done Criteria
+- You can replace repeated manual steps with reliable scripts.
 
-- Refactor into modules
+## Week 2: Terraform Fundamentals
+### Focus
+- Declarative resources and dependency graph
+- Providers, variables, outputs
+- State files and remote state concepts
 
-- Add `dev` vs `prod` variables
+### Labs
+1. Create Terraform for a small environment (network + compute).
+2. Use `terraform fmt`, `validate`, and `plan` every change.
+3. Destroy and recreate safely from code.
 
-**Measurable outcomes**
+### Done Criteria
+- One command path can provision and destroy your lab environment.
 
-- ✅ 1 command creates infra; 1 command destroys it
+## Week 3: Terraform Structure and Reuse
+### Focus
+- Module design
+- Environment separation (`dev`, `staging`, `prod`)
+- Drift detection and state hygiene
 
-- ✅ README includes architecture + how to run
+### Labs
+1. Refactor flat Terraform into reusable modules.
+2. Add separate variables for `dev` and `prod`.
+3. Simulate drift and reconcile with plan/apply.
 
----
+### Done Criteria
+- Your Terraform is modular and environment-aware.
 
-## 5.2 CI basics (pipelines, secrets, environments)
+## Week 4: CI/CD Basics for Infrastructure and Apps
+### Focus
+- Pipeline stages: lint, test, build, plan, deploy
+- Secret handling in CI
+- Branch protection and required checks
 
-### Must understand
+### Labs
+1. Create CI pipeline that runs Terraform checks on every PR.
+2. Add an intentional formatting failure to verify gate behavior.
+3. Publish pipeline status badge in repo README.
 
-- Pipeline stages: validate → test → build → deploy
+### Done Criteria
+- Pull requests cannot merge when critical checks fail.
 
-- Secrets: never in repo; use CI secret store
+## Week 5: Docker and Container Operations
+### Focus
+- Dockerfile design and layer caching
+- Image tags, registries, and versioning
+- Runtime configuration via environment variables
 
-- Environments: dev/staging/prod pattern
+### Labs
+1. Containerize a small app with a minimal Dockerfile.
+2. Build, tag, and push image to a registry.
+3. Run container with environment-specific config.
 
-### Lab
+### Done Criteria
+- You can build and run versioned container images reliably.
 
-- CI runs `terraform fmt/validate/plan` on PR
+## Week 6: End-to-End Automation Project
+### Project Scope
+Automate delivery of one small service:
+- Infrastructure provisioned by Terraform
+- App containerized with Docker
+- CI pipeline validates and deploys to a lab environment
+- Rollback steps documented
 
-**Measurable outcomes**
+### Deliverables
+- `README.md` with architecture and run instructions
+- `Makefile` or script entry points for common actions
+- CI pipeline file
+- Terraform modules and environment configs
+- Post-incident note from one failed deployment drill
 
-- ✅ CI status badge in README
-
-- ✅ A failed PR when formatting is wrong
-
----
-
-## 5.3 Docker basics (enough for support)
-
-### Must do
-
-- `Dockerfile`, build/run
-
-- push to a registry
-
-- environment variables
-
-- basic image tagging
-
-### Lab
-
-- Containerize a simple app
-
-- Run it behind a reverse proxy or with port mapping
-
-**Measurable outcomes**
-
-- ✅ Repo includes Dockerfile + run instructions
-
-- ✅ You can explain how configs are injected (env vars)
+## Mastery Checklist
+- I can automate infrastructure changes with reviewable code.
+- I can enforce quality gates with CI before deployment.
+- I can package and run apps consistently using containers.
+- I can document rollback and recovery for failed automation.

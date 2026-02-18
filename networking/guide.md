@@ -1,103 +1,98 @@
-# 2) Networking (Cloud-relevant)
+# Networking Learning Plan
 
-## 2.1 DNS, HTTP/HTTPS, TLS basics
+## Goal
+Develop cloud-ready networking fundamentals so you can diagnose connectivity and service reachability issues quickly.
 
-### Good looks like
+## Time Commitment
+- 5 weeks
+- 5 sessions per week
+- 60 to 90 minutes per session
 
-You can debug “site down” without guessing.
+## Prerequisites
+- Linux VM with internet access
+- Tools installed: `curl`, `dig`, `ip`, `ss`, `traceroute`, `tcpdump`
+- Basic comfort with terminal commands
 
-### Concepts
-
-- DNS: A/AAAA/CNAME, TTL
-
-- HTTP vs HTTPS, status codes (200/301/403/404/500/502/504)
-
-- TLS: cert mismatch, expired cert, SNI basics (concept-level)
+## Week 1: Core TCP/IP and Packet Flow
+### Focus
+- OSI vs TCP/IP model (practical view)
+- IP addresses, CIDR notation, subnets
+- Packet flow from client to service
 
 ### Labs
+1. Identify local IP, gateway, and DNS resolver.
+2. Convert CIDR blocks to host ranges.
+3. Draw packet path for one request in your notes.
 
-- Use `curl -I` to check headers/status
+### Done Criteria
+- You can explain how a request travels from browser to server.
+- You can calculate usable IP ranges from a CIDR block.
 
-- Use `dig` to confirm correct record
+## Week 2: DNS, HTTP, HTTPS, TLS
+### Focus
+- DNS records (`A`, `AAAA`, `CNAME`) and TTL behavior
+- HTTP response codes and request/response flow
+- TLS handshake basics and certificate failures
 
-- Simulate:
-  - wrong DNS → NXDOMAIN
+### Labs
+1. Use `dig` and `nslookup` to validate DNS records.
+2. Use `curl -I` and `curl -v` to inspect status codes and TLS details.
+3. Simulate wrong DNS and expired-cert scenarios in a lab setup.
 
-  - wrong port → timeout/refused
+### Done Criteria
+- You can separate DNS issues from HTTP/TLS issues.
+- You can read `curl -v` output and identify handshake failures.
 
-  - app error → 500
+## Week 3: Routing, NAT, Public vs Private Reachability
+### Focus
+- Route tables and default routes
+- Public subnet vs private subnet behavior
+- NAT for outbound-only internet access
 
-**Measurable outcomes**
+### Labs
+1. Inspect route tables with `ip route`.
+2. Simulate blocked inbound and working outbound traffic.
+3. Explain when Internet Gateway vs NAT is required in AWS.
 
-- ✅ You can classify failures into: DNS / TCP / TLS / HTTP / app
+### Done Criteria
+- You can predict whether a host is internet-reachable.
+- You can explain NAT vs Internet Gateway in practical terms.
 
----
+## Week 4: Firewalls and Access Controls
+### Focus
+- Host firewall concepts (`ufw`/`iptables`/`nftables`)
+- Security group mindset vs network ACL mindset
+- Timeout vs connection refused patterns
 
-## 2.2 Subnets + routing (private/public, NAT vs IGW)
+### Labs
+1. Run a service on port `8080`.
+2. Block and unblock traffic at firewall level.
+3. Use `ss`, `curl`, and logs to prove the exact failure point.
 
-### What you must understand (cloud transferable)
+### Done Criteria
+- You can distinguish "app down" from "network blocked".
+- You can verify listening ports and allowed paths confidently.
 
-- **Public subnet**: has route to **Internet Gateway**
+## Week 5: Troubleshooting Patterns and Incident Drills
+### Focus
+- A repeatable triage workflow
+- Common outage patterns and first checks
+- Writing evidence-driven incident notes
 
-- **Private subnet**: no direct IGW route; uses **NAT** for outbound only
+### Labs
+1. Run three timed drills:
+   - DNS misconfiguration
+   - Firewall block
+   - Wrong upstream target
+2. For each drill, write symptom, hypothesis, tests, fix, prevention.
 
-- Route tables decide _where traffic goes_
+### Final Project
+Build a "Network Troubleshooting Playbook" including:
+- Command checklist by failure type
+- Decision tree (DNS vs routing vs firewall vs app)
+- Three completed incident reports from your drills
 
-- Default route `0.0.0.0/0` is the “send to internet” decision
-
-### Mini-diagram mental model
-
-`Public subnet -> IGW -> Internet Private subnet -> NAT -> IGW -> Internet (outbound only)`
-
-### Lab (even before AWS)
-
-- On your VM, simulate “private” by blocking inbound ports and allowing outbound
-
-- Practice recognizing “inbound blocked” vs “routing broken”
-
-**Measurable outcomes**
-
-- ✅ You can explain NAT vs IGW in 3–5 sentences clearly
-
-- ✅ You can predict whether something is reachable from the internet
-
----
-
-## 2.3 Firewalls / Security groups concepts
-
-### Transferable idea
-
-- **Security group** = instance-level “allow rules” (stateful concept)
-
-- Network ACL = subnet-level rules (concept)
-
-- Common result of misconfig: **timeouts** or “connection refused”
-
-### Lab drill
-
-- Run a service on port 8080
-
-- Block it (local firewall or VM rules)
-
-- Use `ss` and `curl -v` to prove:
-  - service is listening but network blocks it
-
-**Measurable outcomes**
-
-- ✅ You can distinguish: “service not running” vs “blocked by firewall”
-
----
-
-## 2.4 Common failure patterns to memorize
-
-- **DNS misconfig** → `dig` fails / wrong target
-
-- **Blocked ports** → timeout/refused
-
-- **Wrong routes** → unreachable/timeout
-
-- **TLS/cert issues** → handshake error in `curl -v`
-
-- **App up but unhealthy behind LB** → 502/504 patterns
-
-Make a one-page “Failure Pattern Cheat Sheet” in your repo.
+## Mastery Checklist
+- I can classify failures as DNS, TCP, TLS, HTTP, or app-layer.
+- I can prove root cause with commands, not assumptions.
+- I can explain public/private subnet behavior clearly.
