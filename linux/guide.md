@@ -1,232 +1,112 @@
-# 1) Linux (Ops-level)
-
-## 1.1 Processes & services (systemd, journalctl)
-
-### Good looks like
-
-You can answer in minutes:
-
-- “Why is my service down?”
-
-- “What changed?”
-
-- “How do I safely restart without guessing?”
-
-### Concepts
-
-- Process vs service
-
-- Exit codes (0 success; non-zero fail)
-
-- `systemd` units, `ExecStart`, dependencies
-
-- Logs via `journalctl`
-
-### Must-know commands
-
-- Services:
-  - `systemctl status <service>`
-
-  - `systemctl start|stop|restart <service>`
-
-  - `systemctl enable|disable <service>`
-
-- Logs:
-  - `journalctl -u <service> -n 200 --no-pager`
-
-  - `journalctl -u <service> --since "1 hour ago"`
-
-- Processes:
-  - `ps aux | grep <name>`
-
-  - `top` / `htop`
-
-  - `kill -SIGTERM <pid>` then `kill -9 <pid>` (last resort)
-
-### Mini-lab: “Hello Service”
-
-1. Create a simple script that prints something every 2 seconds.
-
-2. Create a systemd service for it.
-
-3. Intentionally break it (bad path, wrong perms), then fix it.
-
-**Measurable outcomes**
-
-- ✅ You can `systemctl start` and see logs in `journalctl`
-
-- ✅ You can explain what the unit file does
-
-- ✅ You can diagnose a failed start from logs
-
-### Common failures to drill
-
-- Wrong file permissions (`Permission denied`)
-
-- Missing environment variables
-
-- Wrong working directory
-
-- Port already in use
-
-**Portfolio writeup**
-
-- A 1-page runbook: _“How I debug a failed systemd service”_
-
----
-
-## 1.2 Logs (locations, levels, rotation basics)
-
-### Good looks like
-
-You can locate logs fast and decide what matters.
-
-### Concepts
-
-- Common log paths:
-  - `/var/log/syslog` (Ubuntu/Debian)
-
-  - `/var/log/auth.log`
-
-  - Application logs (varies)
-
-- Log levels: DEBUG/INFO/WARN/ERROR
-
-- Rotation (you don’t need to master, just understand):
-  - `logrotate`, rotated files like `.1`, `.gz`
-
-### Must-know commands
-
-- `tail -f /var/log/syslog`
-
-- `grep -R "ERROR" /var/log/`
-
-- `less <file>`
-
-- `zless /var/log/<rotated>.gz`
-
-### Mini-lab: “Log hunting”
-
-- Generate logs (failed SSH attempt, service failure)
-
-- Find the exact lines proving what happened
-
-**Measurable outcomes**
-
-- ✅ You can find auth-related events in `auth.log`
-
-- ✅ You can explain “what happened” using log evidence
-
----
-
-## 1.3 Permissions (users/groups/sudo/SSH keys)
-
-### Good looks like
-
-You can fix access problems without random chmod-ing.
-
-### Concepts
-
-- Users/groups ownership: `user:group`
-
-- Permissions: `rwx` for user/group/other
-
-- `sudo` policy basics (least privilege mentality)
-
-- SSH keys: private key, public key, `authorized_keys`
-
-### Must-know commands
-
-- `ls -lah`
-
-- `id`, `groups`
-
-- `chmod`, `chown`
-
-- `sudo -l`
-
-- SSH:
-  - `ssh -i key.pem user@host`
-
-  - `~/.ssh/config` (quality-of-life)
-
-### Mini-lab: “Permission denied”
-
-- Create a folder a new user can’t read
-
-- Fix it _properly_ using group ownership or intended perms
-
-- Set up key-based SSH login (on your VM)
-
-**Measurable outcomes**
-
-- ✅ You can explain why access failed (owner/group/other)
-
-- ✅ You can fix it with minimal permission changes
-
-- ✅ You can SSH with keys reliably
-
----
-
-## 1.4 Networking tools (curl, dig, ss, traceroute, tcpdump)
-
-### Good looks like
-
-You can isolate “network problem” into DNS vs routing vs firewall vs app.
-
-### Must-know commands + what they prove
-
-- `curl -v http://host:port` → app reachability + HTTP status + TLS
-
-- `dig example.com` / `nslookup` → DNS correctness
-
-- `ss -tulpn` → what’s listening on ports (server-side truth)
-
-- `traceroute host` → path/routing issues (high-level)
-
-- `tcpdump -i eth0 port 80` → proof packets arrive/leave (basic)
-
-### Mini-lab: “Is it DNS or the app?”
-
-- Run a local web service
-
-- Break DNS resolution or hosts mapping
-
-- Use tools to prove the root cause
-
-**Measurable outcomes**
-
-- ✅ You can prove where failure occurs (DNS vs port vs service)
-
----
-
-## 1.5 Troubleshooting playbook (your default method)
-
-### Template
-
-1. **Symptom:** what is broken? who is impacted?
-
-2. **Hypothesis:** 2–3 likely causes
-
-3. **Test:** quick checks to confirm/deny each
-
-4. **Fix:** smallest safe change
-
-5. **Prevent:** monitoring, automation, documentation
-
-### Practice drill (repeat weekly)
-
-Pick one:
-
-- service down
-
-- port blocked
-
-- wrong config
-
-- permission denied
-  …and write a 10–15 line incident note using the template.
-
-**Measurable outcome**
-
-- ✅ 5 incident notes in your repo by graduation
+# Linux Learning Plan
+
+## Goal
+Build Linux operations skills to support and troubleshoot real services in production-like environments.
+
+## Time Commitment
+- 6 weeks
+- 5 sessions per week
+- 60 to 90 minutes per session
+
+## Prerequisites
+- One Linux VM (Ubuntu or Amazon Linux)
+- A non-root user with `sudo`
+- Notes folder in this repo for commands, mistakes, and fixes
+
+## Week 1: Shell, Filesystem, and Package Basics
+### Focus
+- Filesystem layout: `/etc`, `/var`, `/home`, `/opt`, `/tmp`
+- Navigation and text tools: `ls`, `cd`, `find`, `grep`, `awk`, `sed`
+- Package management: `apt` or `dnf` basics
+
+### Labs
+1. Install and remove one package safely.
+2. Locate config files for SSH and your shell.
+3. Extract only `ERROR` lines from a sample log file.
+
+### Done Criteria
+- You can explain where config, logs, and app data usually live.
+- You can search files quickly with one command pipeline.
+
+## Week 2: Processes, Services, and Boot
+### Focus
+- Process lifecycle and signals
+- `systemd` units and restart policies
+- Startup behavior (`enable` vs `start`)
+
+### Labs
+1. Create a simple script and run it as a `systemd` service.
+2. Break the service with a bad path, then debug and fix it.
+3. Compare `ps`, `top`/`htop`, and `systemctl status` outputs.
+
+### Done Criteria
+- You can recover a failed service using `journalctl` evidence.
+- You can describe why a service does or does not start at boot.
+
+## Week 3: Logs and Troubleshooting Workflow
+### Focus
+- `journalctl` and `/var/log/*`
+- Log levels and noisy vs actionable logs
+- Repeatable troubleshooting method
+
+### Labs
+1. Trigger three failures (bad permissions, bad env var, wrong port).
+2. Capture proof from logs for each failure.
+3. Write a short runbook: symptom, checks, fix, prevention.
+
+### Done Criteria
+- You can produce a timeline of events from logs.
+- You can avoid guessing by validating hypotheses quickly.
+
+## Week 4: Users, Groups, Permissions, SSH
+### Focus
+- Ownership and mode bits (`rwx`)
+- `sudo` least-privilege mindset
+- SSH key-based access and hardening basics
+
+### Labs
+1. Create a user and group model for a service account.
+2. Reproduce a `Permission denied` issue and fix it with minimal changes.
+3. Configure SSH keys and disable password login in a lab VM.
+
+### Done Criteria
+- You can explain exactly why a user can or cannot access a file.
+- You can set up key-based SSH login end to end.
+
+## Week 5: Linux Networking Tools for Ops
+### Focus
+- Host/network diagnostics with `curl`, `dig`, `ss`, `traceroute`, `tcpdump`
+- Difference between DNS, routing, firewall, and app errors
+
+### Labs
+1. Run a local web service on a custom port.
+2. Break DNS resolution and prove root cause.
+3. Block traffic locally and compare timeout vs refused behavior.
+
+### Done Criteria
+- You can classify outages into DNS, network, or service issues.
+- You can prove where packets stop with a command and output.
+
+## Week 6: Automation and Final Linux Project
+### Focus
+- Bash scripting fundamentals for operations
+- Cron or systemd timers
+- Idempotent scripts and safe rollback habits
+
+### Labs
+1. Script health checks for CPU, disk, memory, and service status.
+2. Schedule the script and save output to rotating logs.
+3. Add non-zero exit codes for failures.
+
+### Final Project
+Build a "Linux service operations kit" that includes:
+- One managed `systemd` service
+- One troubleshooting runbook
+- One Bash diagnostic script
+- One incident report from a simulated outage
+
+## Mastery Checklist
+- I can diagnose a failed service in under 15 minutes.
+- I can trace errors from symptom to log evidence.
+- I can fix permission and SSH issues without unsafe `chmod 777`.
+- I can script repeatable checks instead of manual steps.
